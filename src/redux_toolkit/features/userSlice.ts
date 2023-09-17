@@ -6,11 +6,12 @@ const initialState = {
     name: "",
     email: "",
     mobileNumber: "",
-    difficultyLevel: "", //  ENUM Values - Easy, Medium, Hard
+    difficultyLevel: "", //  ENUM Values 
     previousRecords: [
       {
-        score: 0,
-        result: "", // ENUM Values - Win Loose
+        score: 10,
+        level:"LEVEL EASY",
+        result: "WIN", // ENUM Values - WIN LOOSE
       },
     ],
   },
@@ -22,6 +23,7 @@ export const saveUserSlice = createSlice({
   initialState,
   reducers: {
     saveUserData: (state, action) => {
+      console.log(action.payload)
       state.user = { ...state.user, ...action.payload };
     },
   },
