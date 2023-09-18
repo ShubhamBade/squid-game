@@ -6,6 +6,7 @@ import SelectDropdown from "react-native-select-dropdown";
 import Icon from "react-native-vector-icons/Entypo";
 import { useDispatch, useSelector } from "react-redux";
 import { saveUserData } from "../redux_toolkit/features/userSlice";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export const CreateAccountScreen = ({ navigation }) => {
   const user = useSelector((state) => state.userReducer.user);
@@ -37,7 +38,7 @@ export const CreateAccountScreen = ({ navigation }) => {
 
   const levels = ["LEVEL EASY", "LEVEL MEDIUM", " LEVEL HARD"];
 
-  const handleOnPress = () => {
+  const handleOnPress = async() => {
     if (
       user.name === "" ||
       user.mobileNumber === "" ||
@@ -45,6 +46,11 @@ export const CreateAccountScreen = ({ navigation }) => {
     ) {
       setError(true);
     } else {
+      try {
+        await AsyncStorage.setItem("user", JSON.stringify(user));
+      } catch (error) {
+        console.log("Error while setting async storage");
+      }
       setTimeout(() => {
         navigation.navigate("GreenLightRedLightScreen");
       }, 1000);

@@ -2,12 +2,24 @@ import { StyleSheet, View, Image, ImageBackground } from "react-native";
 import React from "react";
 import { slickHeight, slickWidth } from "slick-sizer-ui";
 import { ButtonComponent } from "../index";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useDispatch, useSelector } from "react-redux";
+import { saveUserData } from "../redux_toolkit/features/userSlice";
 
-export const LandingScreen = ({navigation}) => {
+export const LandingScreen = ({ navigation }) => {
+  const dispatch = useDispatch();
 
-  const handleOnPress=()=>{
-    navigation.navigate("CreateAccountScreen")
-  }
+  const handleOnPress = async () => {
+    const userData = await AsyncStorage.getItem("user");
+    const userParseData = JSON.parse(userData);
+    console.log("Aync data :",userParseData)
+    dispatch(saveUserData(userParseData));
+    if (userParseData.mobileNumber === "") {
+      navigation.navigate("CreateAccountScreen");
+    } else {
+      navigation.navigate("GreenLightRedLightScreen");
+    }
+  };
   return (
     <View style={styles.container}>
       <ImageBackground
@@ -35,7 +47,11 @@ export const LandingScreen = ({navigation}) => {
             alignItems: "center",
           }}
         >
-          <ButtonComponent title="Tap To Play!" width={50} onPress={handleOnPress}/>
+          <ButtonComponent
+            title="Tap To Play!"
+            width={50}
+            onPress={handleOnPress}
+          />
         </View>
       </ImageBackground>
     </View>

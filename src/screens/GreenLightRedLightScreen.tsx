@@ -14,6 +14,7 @@ import Timer from "react-native-vector-icons/MaterialCommunityIcons";
 import { ButtonComponent } from "../components/ButtonComponent";
 import { useDispatch, useSelector } from "react-redux";
 import { saveUserData } from "../redux_toolkit/features/userSlice";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export const GreenLightRedLightScreen = ({ navigation }) => {
   const user = useSelector((state) => state.userReducer.user);
@@ -69,24 +70,28 @@ export const GreenLightRedLightScreen = ({ navigation }) => {
 
   useEffect(() => {
     if (gameOver) {
-    navigation.navigate("ResultScreen",{result:"LOOSE"});
+      navigation.navigate("ResultScreen", { result: "LOOSE" });
     }
   }, [gameOver]);
 
-  const checkValidClick = (color: string) => {
+  const checkValidClick = async(color: string) => {
     if (color === "red") {
       dispatch(
         saveUserData({
           ...user,
           previousRecords: [
             ...user.previousRecords,
-            { result: "LOOSE", score: numberOfValidHits, level: user.difficultyLevel},
+            {
+              result: "LOOSE",
+              score: numberOfValidHits,
+              level: user.difficultyLevel,
+            },
           ],
         })
       );
       setTimerCount(0);
       setNumberOfValidHits(0);
-      navigation.navigate("ResultScreen",{result:"LOOSE"});
+      navigation.navigate("ResultScreen", { result: "LOOSE" });
     } else if (color === "green") {
       setNumberOfValidHits((prevHits) => prevHits + 1);
       if (
@@ -98,16 +103,30 @@ export const GreenLightRedLightScreen = ({ navigation }) => {
             ...user,
             previousRecords: [
               ...user.previousRecords,
-              { result: "WIN", score: numberOfValidHits,level: user.difficultyLevel },
+              {
+                result: "WIN",
+                score: numberOfValidHits,
+                level: user.difficultyLevel,
+              },
             ],
           })
         );
         setTimerCount(0);
         setNumberOfValidHits(0);
-        navigation.navigate("ResultScreen",{result:"WIN"});
+        navigation.navigate("ResultScreen", { result: "WIN" });
       }
     }
   };
+  useEffect(() => {
+    async function saveLocalData() {
+      try {
+        await AsyncStorage.setItem("user", JSON.stringify(user));
+      } catch (error) {
+        console.error("Error while saving user data in async:", error);
+      }
+    }
+    saveLocalData();
+  }, [user]);
 
   return (
     <ImageBackground
