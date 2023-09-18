@@ -10,17 +10,21 @@ export const LandingScreen = ({ navigation }) => {
   const dispatch = useDispatch();
 
   const handleOnPress = async () => {
-    const userData = await AsyncStorage.getItem("user");
-    const userParseData = JSON.parse(userData);
-    console.log("Aync data :",userParseData)
-    if(userParseData){
-      dispatch(saveUserData(userParseData));
-      if (userParseData.mobileNumber === "") {
-        navigation.navigate("CreateAccountScreen");
+    try {
+      const userData = await AsyncStorage.getItem("user");
+      const userParseData = JSON.parse(userData);
+      console.log("Aync data :", userParseData);
+      if (userParseData) {
+        dispatch(saveUserData(userParseData));
+        if (userParseData.mobileNumber === "") {
+          navigation.navigate("CreateAccountScreen");
+        } else {
+          navigation.navigate("GreenLightRedLightScreen");
+        }
       } else {
-        navigation.navigate("GreenLightRedLightScreen");
+        navigation.navigate("CreateAccountScreen");
       }
-    }else{
+    } catch (error) {
       navigation.navigate("CreateAccountScreen");
     }
   };
