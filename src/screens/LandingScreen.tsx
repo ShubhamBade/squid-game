@@ -13,11 +13,15 @@ export const LandingScreen = ({ navigation }) => {
     const userData = await AsyncStorage.getItem("user");
     const userParseData = JSON.parse(userData);
     console.log("Aync data :",userParseData)
-    dispatch(saveUserData(userParseData));
-    if (userParseData.mobileNumber === "") {
+    if(userParseData){
+      dispatch(saveUserData(userParseData));
+      if (userParseData.mobileNumber === "") {
+        navigation.navigate("CreateAccountScreen");
+      } else {
+        navigation.navigate("GreenLightRedLightScreen");
+      }
+    }else{
       navigation.navigate("CreateAccountScreen");
-    } else {
-      navigation.navigate("GreenLightRedLightScreen");
     }
   };
   return (
